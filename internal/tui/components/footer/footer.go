@@ -58,7 +58,7 @@ func (m Model) View() string {
 			rightSection = *m.rightSection
 		}
 		spacing := lipgloss.NewStyle().
-			Background(m.ctx.Theme.SelectedBackground).
+			Background(m.ctx.Styles.Common.FooterStyle.GetBackground()).
 			Render(
 				strings.Repeat(
 					" ",
