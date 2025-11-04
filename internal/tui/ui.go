@@ -68,6 +68,14 @@ func NewModel(location config.Location) Model {
 	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Sum != "" {
 		version = info.Main.Version
 	}
+	if version == "dev" {
+		version = location.RepoPath
+		if version == "" {
+			if cwd, err := os.Getwd(); err == nil {
+				version = cwd
+			}
+		}
+	}
 
 	m.ctx = &context.ProgramContext{
 		RepoPath:   location.RepoPath,

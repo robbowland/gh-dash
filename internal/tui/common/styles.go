@@ -45,7 +45,7 @@ func BuildStyles(theme theme.Theme) CommonStyles {
 	s.FaintTextStyle = lipgloss.NewStyle().
 		Foreground(theme.FaintText)
 	s.FooterStyle = lipgloss.NewStyle().
-		Background(theme.SelectedBackground).
+		Background(lipgloss.Color("#000000")).
 		Height(FooterHeight)
 
 	s.ErrorStyle = s.FooterStyle.
