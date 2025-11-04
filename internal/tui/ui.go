@@ -15,7 +15,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	log "github.com/charmbracelet/log"
-	"github.com/cli/go-gh/v2/pkg/browser"
 	zone "github.com/lrstanley/bubblezone"
 
 	"github.com/dlvhdr/gh-dash/v4/internal/config"
@@ -603,18 +602,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.MouseMsg:
 		if msg.Action != tea.MouseActionRelease || msg.Button != tea.MouseButtonLeft {
 			return m, nil
-		}
-		if zone.Get("donate").InBounds(msg) {
-			log.Debug("Donate clicked", "msg", msg)
-			openCmd := func() tea.Msg {
-				b := browser.New("", os.Stdout, os.Stdin)
-				err := b.Browse("https://github.com/sponsors/dlvhdr")
-				if err != nil {
-					return constants.ErrMsg{Err: err}
-				}
-				return nil
-			}
-			cmds = append(cmds, openCmd)
 		}
 
 	case tea.WindowSizeMsg:

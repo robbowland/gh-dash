@@ -24,8 +24,6 @@ import (
 	"github.com/dlvhdr/gh-dash/v4/internal/config"
 	"github.com/dlvhdr/gh-dash/v4/internal/git"
 	"github.com/dlvhdr/gh-dash/v4/internal/tui"
-	"github.com/dlvhdr/gh-dash/v4/internal/tui/constants"
-	dctx "github.com/dlvhdr/gh-dash/v4/internal/tui/context"
 	"github.com/dlvhdr/gh-dash/v4/internal/tui/markdown"
 )
 
@@ -39,11 +37,9 @@ var (
 var (
 	cfgFlag string
 
-	logo = lipgloss.NewStyle().Foreground(dctx.LogoColor).MarginBottom(1).SetString(constants.Logo)
-
 	rootCmd = &cobra.Command{
 		Use: "gh dash",
-		Long: lipgloss.JoinVertical(lipgloss.Left, logo.Render(),
+		Long: lipgloss.JoinVertical(lipgloss.Left,
 			"A rich terminal UI for GitHub that doesn't break your flow.",
 			"Visit https://gh-dash.dev for the docs."),
 		Short:   "A rich terminal UI for GitHub that doesn't break your flow.",

@@ -11,7 +11,6 @@ import (
 	"github.com/dlvhdr/gh-dash/v4/internal/tui/common"
 	"github.com/dlvhdr/gh-dash/v4/internal/tui/components/carousel"
 	"github.com/dlvhdr/gh-dash/v4/internal/tui/components/section"
-	"github.com/dlvhdr/gh-dash/v4/internal/tui/constants"
 	"github.com/dlvhdr/gh-dash/v4/internal/tui/context"
 	"github.com/dlvhdr/gh-dash/v4/internal/utils"
 )
@@ -65,13 +64,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	c := m.carousel.View()
-	logo := m.viewLogo()
+	version := m.viewVersion()
 	return m.ctx.Styles.Tabs.TabsRow.
 		Width(m.ctx.ScreenWidth).
 		Height(common.HeaderHeight).
 		Render(lipgloss.JoinHorizontal(lipgloss.Bottom,
 			lipgloss.NewStyle().Width(
-				m.ctx.ScreenWidth-lipgloss.Width(logo)).Render(c), logo))
+				m.ctx.ScreenWidth-lipgloss.Width(version)).Render(c), version))
 }
 
 type latestVersionMsg struct {
@@ -106,7 +105,7 @@ func (m *Model) UpdateProgramContext(ctx *context.ProgramContext) {
 		Separator:         ctx.Styles.Tabs.TabSeparator,
 	})
 
-	m.carousel.SetWidth(ctx.ScreenWidth - lipgloss.Width(m.viewLogo()))
+	m.carousel.SetWidth(ctx.ScreenWidth - lipgloss.Width(m.viewVersion()))
 }
 
 func (m *Model) SetSections(sections []section.Section) {
@@ -144,7 +143,7 @@ func (m *Model) UpdateTabTitles() {
 	m.carousel.SetCursor(oldCursor)
 }
 
-func (m *Model) viewLogo() string {
+func (m *Model) viewVersion() string {
 	version := lipgloss.NewStyle().Foreground(m.ctx.Theme.SecondaryText).Render(m.ctx.Version)
 	if m.latestVersion != "" && m.ctx.Version != "dev" && m.ctx.Version != m.latestVersion {
 		version = lipgloss.JoinVertical(lipgloss.Left,
@@ -155,11 +154,7 @@ func (m *Model) viewLogo() string {
 		version = lipgloss.PlaceVertical(2, lipgloss.Bottom, version)
 	}
 
-	return lipgloss.NewStyle().Padding(0, 1, 0, 2).Height(2).Render(lipgloss.JoinHorizontal(lipgloss.Bottom,
-		lipgloss.NewStyle().Foreground(context.LogoColor).Render(constants.Logo),
-		" ",
-		version,
-	))
+	return lipgloss.NewStyle().Padding(0, 1, 0, 2).Height(2).Render(version)
 }
 
 func (m *Model) SetAllLoading() []tea.Cmd {

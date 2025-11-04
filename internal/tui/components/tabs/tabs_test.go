@@ -109,16 +109,16 @@ func TestTabs(t *testing.T) {
 
 		tm := teatest.NewTestModel(t, m, teatest.WithInitialTermSize(80, 30))
 
-		testutils.WaitForText(t, tm, "  |  1. Very long title   ⣻   |  2. Title   ⣻   |  3. Title   ⣻   |  … →")
+		testutils.WaitForText(t, tm, "  |  1. Very long title   ⣻   |  2. Title   ⣻   |  3. Title   ⣻   | … →")
 		tm.Send(dataFetchedMsg{})
-		testutils.WaitForText(t, tm, "  |  1. Very long title (10)  |  2. Title (10)  |  3. Title (10)  |  … →")
+		testutils.WaitForText(t, tm, "  |  1. Very long title (10)  |  2. Title (10)  |  3. Title (10)  | … →")
 		for i := 0; i < len(m.ctx.Config.PRSections); i++ {
 			tm.Send(tea.KeyMsg{
 				Type:  tea.KeyRunes,
 				Runes: []rune("l"),
 			})
 		}
-		testutils.WaitForText(t, tm, "← … (10)  |  5. Title (10)  |  6. Title (10)  |  7. Very long title (10)")
+		testutils.WaitForText(t, tm, "← …(10)  |  5. Title (10)  |  6. Title (10)  |  7. Very long title (10)")
 		tm.Quit()
 
 		fm := tm.FinalModel(t)
@@ -142,13 +142,14 @@ func newTestModel(t *testing.T, cfg config.Config) testModel {
 	t.Helper()
 	ctx := &context.ProgramContext{
 		Config:       &cfg,
-		ScreenWidth:  90,
+		ScreenWidth:  80,
 		ScreenHeight: 30,
 		View:         config.PRsView,
 	}
 
 	ctx.Theme = theme.ParseTheme(ctx.Config)
 	ctx.Styles = context.InitStyles(ctx.Theme)
+	ctx.Version = "dev"
 
 	return testModel{
 		ctx:  ctx,
