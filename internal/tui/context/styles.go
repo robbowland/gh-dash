@@ -90,8 +90,8 @@ func InitStyles(theme theme.Theme) Styles {
 	var s Styles
 
 	s.Colors.OpenIssue = lipgloss.AdaptiveColor{
-		Light: "#42A0FA",
-		Dark:  "#42A0FA",
+		Light: "#3fb950",
+		Dark:  "#3fb950",
 	}
 	s.Colors.ClosedIssue = lipgloss.AdaptiveColor{
 		Light: "#C38080",
@@ -200,7 +200,7 @@ func InitStyles(theme theme.Theme) Styles {
 		BorderForeground(theme.FaintBorder)
 
 	s.Tabs.Tab = lipgloss.NewStyle().
-		Faint(true).
+		Foreground(lipgloss.Color("#484f58")).
 		Padding(0, 2)
 	s.Tabs.ActiveTab = s.Tabs.Tab.
 		Faint(false).
