@@ -67,5 +67,5 @@ func (ctx *ProgramContext) GetViewSectionsConfig() []config.SectionConfig {
 		}
 	}
 
-	return append([]config.SectionConfig{{Title: ""}}, configs...)
+	return configs
 }

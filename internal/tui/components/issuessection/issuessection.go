@@ -361,12 +361,12 @@ func FetchAllSections(
 	sections = make([]section.Section, 0, len(sectionConfigs))
 	for i, sectionConfig := range sectionConfigs {
 		sectionModel := NewModel(
-			i+1,
+			i,
 			ctx,
 			sectionConfig,
 			time.Now(),
 			time.Now(),
-		) // 0 is the search section
+		)
 		if sectionConfig.Layout.CreatorIcon.Hidden != nil {
 			sectionModel.ShowAuthorIcon = !*sectionConfig.Layout.CreatorIcon.Hidden
 		}

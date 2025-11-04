@@ -465,14 +465,14 @@ func FetchAllSections(
 	sections = make([]section.Section, 0, len(ctx.Config.PRSections))
 	for i, sectionConfig := range ctx.Config.PRSections {
 		sectionModel := NewModel(
-			i+1, // 0 is the search section
+			i,
 			ctx,
 			sectionConfig,
 			time.Now(),
 			time.Now(),
 		)
-		if len(prs) > 0 && len(prs) >= i+1 && prs[i+1] != nil {
-			oldSection := prs[i+1].(*Model)
+		if len(prs) > i && prs[i] != nil {
+			oldSection := prs[i].(*Model)
 			sectionModel.Prs = oldSection.Prs
 			sectionModel.LastFetchTaskId = oldSection.LastFetchTaskId
 		}

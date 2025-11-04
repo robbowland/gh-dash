@@ -222,13 +222,10 @@ func InitStyles(theme theme.Theme) Styles {
 
 	s.ViewSwitcher.ActiveView = lipgloss.NewStyle().
 		Foreground(theme.PrimaryText).
-		Bold(true).
-		Background(theme.FaintBorder)
+		Bold(true)
 	s.ViewSwitcher.ViewsSeparator = lipgloss.NewStyle().
-		Background(theme.FaintBorder).
 		Foreground(theme.PrimaryBorder)
 	s.ViewSwitcher.InactiveView = lipgloss.NewStyle().
-		Background(theme.FaintBorder).
 		Foreground(theme.FaintText)
 
 	return s

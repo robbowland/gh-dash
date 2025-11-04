@@ -225,6 +225,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case key.Matches(msg, m.keys.Down):
+			if currSection == nil {
+				break
+			}
 			prevRow := currSection.CurrRow()
 			nextRow := currSection.NextRow()
 			if prevRow != nextRow && nextRow == currSection.NumRows()-1 && m.ctx.View != config.RepoView {
@@ -233,14 +236,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmd = m.onViewedRowChanged()
 
 		case key.Matches(msg, m.keys.Up):
+			if currSection == nil {
+				break
+			}
 			currSection.PrevRow()
 			m.onViewedRowChanged()
 
 		case key.Matches(msg, m.keys.FirstLine):
+			if currSection == nil {
+				break
+			}
 			currSection.FirstItem()
 			cmd = m.onViewedRowChanged()
 
 		case key.Matches(msg, m.keys.LastLine):
+			if currSection == nil {
+				break
+			}
 			if currSection.CurrRow()+1 < currSection.NumRows() {
 				cmds = append(cmds, currSection.FetchNextPageSectionRows()...)
 			}
@@ -252,6 +264,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.syncMainContentWidth()
 
 		case key.Matches(msg, m.keys.Refresh):
+			if currSection == nil {
+				break
+			}
 			currSection.ResetFilters()
 			currSection.ResetRows()
 			m.syncSidebar()
@@ -757,9 +772,17 @@ func (m *Model) updateSection(id int, sType string, msg tea.Msg) (cmd tea.Cmd) {
 		m.repo, cmd = m.repo.Update(msg)
 
 	case prssection.SectionType:
+		if id >= len(m.prs) || id < 0 {
+			log.Debug("skipping update: pr section id out of range", "id", id, "len", len(m.prs))
+			return nil
+		}
 		updatedSection, cmd = m.prs[id].Update(msg)
 		m.prs[id] = updatedSection
 	case issuessection.SectionType:
+		if id >= len(m.issues) || id < 0 {
+			log.Debug("skipping update: issue section id out of range", "id", id, "len", len(m.issues))
+			return nil
+		}
 		updatedSection, cmd = m.issues[id].Update(msg)
 		m.issues[id] = updatedSection
 	}
@@ -854,9 +877,9 @@ func (m *Model) getCurrentViewDefaultSection() int {
 	case config.RepoView:
 		return 0
 	case config.PRsView:
-		return 1
+		return 0
 	default:
-		return 1
+		return 0
 	}
 }
 
@@ -865,40 +888,15 @@ func (m *Model) setCurrentViewSections(newSections []section.Section) {
 		return
 	}
 
-	missingSearchSection := len(newSections) == 0 || (len(newSections) > 0 && newSections[0].GetId() != 0)
-	s := make([]section.Section, 0)
-	if m.ctx.View == config.PRsView {
-		if missingSearchSection {
-			search := prssection.NewModel(
-				0,
-				m.ctx,
-				config.PrsSectionConfig{
-					Title:   "",
-					Filters: "archived:false",
-				},
-				time.Now(),
-				time.Now(),
-			)
-			s = append(s, &search)
+	switch m.ctx.View {
+	case config.RepoView:
+		if len(newSections) > 0 {
+			m.repo = newSections[0]
 		}
-		m.prs = append(s, newSections...)
-		newSections = m.prs
-	} else {
-		if missingSearchSection {
-			search := issuessection.NewModel(
-				0,
-				m.ctx,
-				config.IssuesSectionConfig{
-					Title:   "",
-					Filters: "",
-				},
-				time.Now(),
-				time.Now(),
-			)
-			s = append(s, &search)
-		}
-		m.issues = append(s, newSections...)
-		newSections = m.issues
+	case config.PRsView:
+		m.prs = newSections
+	case config.IssuesView:
+		m.issues = newSections
 	}
 
 	m.tabs.SetSections(newSections)

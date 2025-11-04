@@ -106,10 +106,7 @@ func (m *Model) UpdateTabTitles() {
 	for i, tab := range m.sectionTabs {
 		cfg := tab.section.GetConfig()
 		title := cfg.Title
-		// handle search section
-		if i == 0 {
-			// noop
-		} else if tab.section.GetIsLoading() {
+		if tab.section.GetIsLoading() {
 			title = fmt.Sprintf("%s %s", title, m.sectionTabs[i].spinner.View())
 		} else if m.ctx.Config.Theme.Ui.SectionsShowCount {
 			title = fmt.Sprintf("%s (%s)", title,
@@ -125,7 +122,17 @@ func (m *Model) UpdateTabTitles() {
 }
 
 func (m *Model) viewVersion() string {
-	version := lipgloss.NewStyle().Foreground(m.ctx.Theme.SecondaryText).Render(m.ctx.Version)
+	versionStyle := lipgloss.NewStyle()
+	if fg := m.ctx.Styles.Tabs.Tab.GetForeground(); fg != nil {
+		if _, isNoColor := fg.(lipgloss.NoColor); !isNoColor {
+			versionStyle = versionStyle.Foreground(fg)
+		} else {
+			versionStyle = versionStyle.Foreground(m.ctx.Theme.SecondaryText)
+		}
+	} else {
+		versionStyle = versionStyle.Foreground(m.ctx.Theme.SecondaryText)
+	}
+	version := versionStyle.Render(m.ctx.Version)
 	version = lipgloss.PlaceVertical(2, lipgloss.Bottom, version)
 
 	return lipgloss.NewStyle().Padding(0, 1, 0, 2).Height(2).Render(version)
