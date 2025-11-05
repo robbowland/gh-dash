@@ -122,7 +122,7 @@ func (m *Model) renderViewButton(view config.ViewType) string {
 }
 
 func (m *Model) renderViewSwitcher(ctx *context.ProgramContext) string {
-	separator := ctx.Styles.ViewSwitcher.ViewsSeparator.Render(" │ ")
+	separator := m.repoInfoStyle(ctx).Render(" │ ")
 	items := []string{
 		lipgloss.NewStyle().PaddingLeft(1).Render(m.renderViewButton(config.PRsView)),
 		separator,

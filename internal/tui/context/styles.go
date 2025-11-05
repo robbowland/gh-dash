@@ -209,7 +209,7 @@ func InitStyles(theme theme.Theme) Styles {
 		Foreground(theme.PrimaryText)
 	s.Tabs.OverflowIndicator = s.Common.FaintTextStyle.Bold(true).Padding(0, 1)
 	s.Tabs.TabSeparator = lipgloss.NewStyle().
-		Foreground(theme.FaintText)
+		Foreground(theme.FaintBorder)
 	s.Tabs.TabsRow = lipgloss.NewStyle().
 		Height(common.TabsContentHeight).
 		BorderBottom(true).
