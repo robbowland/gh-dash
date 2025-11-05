@@ -547,13 +547,13 @@ func (m Model) GetPagerContent() string {
 	}
 	if m.TotalCount > 0 {
 		pagerContent = fmt.Sprintf(
-			"%v Updated %v • %v %v/%v (fetched %v)",
-			constants.WaitingIcon,
-			timeElapsed,
+			"%v %v/%v (fetched %v) • %v Updated %v",
 			m.SingularForm,
 			m.Table.GetCurrItem()+1,
 			m.TotalCount,
 			len(m.Table.Rows),
+			constants.WaitingIcon,
+			timeElapsed,
 		)
 	}
 	pager := m.Ctx.Styles.ListViewPort.PagerStyle.Render(pagerContent)

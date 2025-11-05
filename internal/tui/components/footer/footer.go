@@ -43,6 +43,7 @@ func (m Model) View() string {
 	if m.ShowConfirmQuit {
 		footer = lipgloss.NewStyle().Render("Really quit? (Press y/enter to confirm, any other key to cancel)")
 	} else {
+		showRightSection := m.rightSection != nil && *m.rightSection != ""
 		viewSwitcher := m.renderViewSwitcher(m.ctx)
 		leftSection := ""
 		if m.leftSection != nil {
@@ -53,18 +54,21 @@ func (m Model) View() string {
 			rightSection = *m.rightSection
 		}
 		repoInfo := m.renderRepoInfo(m.ctx)
-		rightContent := repoInfo
-		if rightSection != "" {
+		repoStyle := m.repoInfoStyle(m.ctx)
+		rightContent := ""
+		if showRightSection {
 			if repoInfo != "" {
 				rightContent = lipgloss.JoinHorizontal(
 					lipgloss.Top,
 					repoInfo,
-					lipgloss.NewStyle().Render(" "),
+					repoStyle.Render(" • "),
 					rightSection,
 				)
 			} else {
 				rightContent = rightSection
 			}
+		} else {
+			rightContent = repoInfo
 		}
 		spacing := lipgloss.NewStyle().
 			Background(m.ctx.Styles.Common.FooterStyle.GetBackground()).
@@ -118,25 +122,30 @@ func (m *Model) renderViewButton(view config.ViewType) string {
 }
 
 func (m *Model) renderViewSwitcher(ctx *context.ProgramContext) string {
-	view := lipgloss.JoinHorizontal(
-		lipgloss.Top,
+	separator := ctx.Styles.ViewSwitcher.ViewsSeparator.Render(" │ ")
+	items := []string{
 		lipgloss.NewStyle().PaddingLeft(1).Render(m.renderViewButton(config.PRsView)),
-		ctx.Styles.ViewSwitcher.ViewsSeparator.Render(" │ "),
+		separator,
 		m.renderViewButton(config.IssuesView),
 		lipgloss.NewStyle().Render(" "),
-		ctx.Styles.Common.FooterStyle.Foreground(m.ctx.Theme.FaintBorder).Render(" │"),
-	)
+	}
+	view := lipgloss.JoinHorizontal(lipgloss.Top, items...)
 
 	return ctx.Styles.ViewSwitcher.Root.Render(view)
 }
 
-func (m *Model) renderRepoInfo(ctx *context.ProgramContext) string {
-	grayStyle := ctx.Styles.Common.FooterStyle
+func (m *Model) repoInfoStyle(ctx *context.ProgramContext) lipgloss.Style {
+	style := ctx.Styles.Common.FooterStyle
 	if fg := ctx.Styles.ViewSwitcher.InactiveView.GetForeground(); fg != nil {
-		grayStyle = grayStyle.Foreground(fg)
+		style = style.Foreground(fg)
 	} else {
-		grayStyle = grayStyle.Foreground(ctx.Theme.FaintText)
+		style = style.Foreground(ctx.Theme.FaintText)
 	}
+	return style
+}
+
+func (m *Model) renderRepoInfo(ctx *context.ProgramContext) string {
+	grayStyle := m.repoInfoStyle(ctx)
 
 	var repo string
 	if m.ctx.RepoPath != "" {

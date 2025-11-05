@@ -217,7 +217,6 @@ func InitStyles(theme theme.Theme) Styles {
 		BorderBottomForeground(theme.PrimaryBorder)
 	s.ViewSwitcher.Root = lipgloss.NewStyle().
 		Background(s.Common.FooterStyle.GetBackground()).
-		Foreground(theme.InvertedText).
 		Bold(true)
 
 	s.ViewSwitcher.ActiveView = lipgloss.NewStyle().
