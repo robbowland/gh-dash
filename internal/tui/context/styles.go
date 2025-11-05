@@ -144,7 +144,7 @@ func InitStyles(theme theme.Theme) Styles {
 		Padding(0, s.Section.ContainerPadding)
 	s.Section.SpinnerStyle = lipgloss.NewStyle().Padding(0, 1)
 	s.Section.EmptyStateStyle = lipgloss.NewStyle().
-		Faint(true).
+		Foreground(theme.FaintText).
 		PaddingLeft(1).
 		MarginBottom(1)
 	s.Section.KeyStyle = lipgloss.NewStyle().
@@ -209,7 +209,7 @@ func InitStyles(theme theme.Theme) Styles {
 		Foreground(theme.PrimaryText)
 	s.Tabs.OverflowIndicator = s.Common.FaintTextStyle.Bold(true).Padding(0, 1)
 	s.Tabs.TabSeparator = lipgloss.NewStyle().
-		Foreground(theme.SecondaryBorder)
+		Foreground(theme.FaintText)
 	s.Tabs.TabsRow = lipgloss.NewStyle().
 		Height(common.TabsContentHeight).
 		BorderBottom(true).

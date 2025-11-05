@@ -131,18 +131,25 @@ func (m *Model) renderViewSwitcher(ctx *context.ProgramContext) string {
 }
 
 func (m *Model) renderRepoInfo(ctx *context.ProgramContext) string {
+	grayStyle := ctx.Styles.Common.FooterStyle
+	if fg := ctx.Styles.ViewSwitcher.InactiveView.GetForeground(); fg != nil {
+		grayStyle = grayStyle.Foreground(fg)
+	} else {
+		grayStyle = grayStyle.Foreground(ctx.Theme.FaintText)
+	}
+
 	var repo string
 	if m.ctx.RepoPath != "" {
 		name := path.Base(m.ctx.RepoPath)
 		if m.ctx.RepoUrl != "" {
 			name = git.GetRepoShortName(m.ctx.RepoUrl)
 		}
-		repo = ctx.Styles.Common.FooterStyle.Render(fmt.Sprintf(" %s", name))
+		repo = grayStyle.Render(fmt.Sprintf(" %s", name))
 	}
 
 	var user string
 	if ctx.User != "" {
-		user = ctx.Styles.Common.FooterStyle.Render("@" + ctx.User)
+		user = grayStyle.Render("@" + ctx.User)
 	}
 
 	if repo == "" && user == "" {
@@ -158,9 +165,7 @@ func (m *Model) renderRepoInfo(ctx *context.ProgramContext) string {
 		return lipgloss.JoinHorizontal(lipgloss.Top, leadingSpace, repo)
 	}
 
-	separator := ctx.Styles.Common.FooterStyle.
-		Foreground(m.ctx.Theme.FaintText).
-		Render(" • ")
+	separator := grayStyle.Render(" • ")
 
 	return lipgloss.JoinHorizontal(lipgloss.Top, leadingSpace, repo, separator, user)
 }
