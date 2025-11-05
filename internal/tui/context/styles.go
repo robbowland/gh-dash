@@ -213,7 +213,7 @@ func InitStyles(theme theme.Theme) Styles {
 	s.Tabs.TabsRow = lipgloss.NewStyle().
 		Height(common.TabsContentHeight).
 		BorderBottom(true).
-		BorderStyle(lipgloss.ThickBorder()).
+		BorderStyle(lipgloss.NormalBorder()).
 		BorderBottomForeground(theme.PrimaryBorder)
 	s.ViewSwitcher.Root = lipgloss.NewStyle().
 		Background(s.Common.FooterStyle.GetBackground()).
