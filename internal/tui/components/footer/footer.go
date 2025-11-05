@@ -122,12 +122,15 @@ func (m *Model) renderViewButton(view config.ViewType) string {
 }
 
 func (m *Model) renderViewSwitcher(ctx *context.ProgramContext) string {
-	separator := m.repoInfoStyle(ctx).Render(" │ ")
+	separator := ctx.Styles.Tabs.TabSeparator.Render("|")
+	spacer := lipgloss.NewStyle().Render(" ")
 	items := []string{
 		lipgloss.NewStyle().PaddingLeft(1).Render(m.renderViewButton(config.PRsView)),
+		spacer,
 		separator,
+		spacer,
 		m.renderViewButton(config.IssuesView),
-		lipgloss.NewStyle().Render(" "),
+		spacer,
 	}
 	view := lipgloss.JoinHorizontal(lipgloss.Top, items...)
 
