@@ -205,7 +205,6 @@ func InitStyles(theme theme.Theme) Styles {
 	s.Tabs.ActiveTab = s.Tabs.Tab.
 		Faint(false).
 		Bold(true).
-		Background(theme.SelectedBackground).
 		Foreground(theme.PrimaryText)
 	s.Tabs.OverflowIndicator = s.Common.FaintTextStyle.Bold(true).Padding(0, 1)
 	s.Tabs.TabSeparator = lipgloss.NewStyle().
