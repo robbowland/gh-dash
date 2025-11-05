@@ -181,7 +181,8 @@ func InitStyles(theme theme.Theme) Styles {
 
 	s.ListViewPort.PagerStyle = lipgloss.NewStyle().
 		Padding(0, 1).
-		Foreground(theme.FaintText)
+		Foreground(theme.FaintText).
+		UnsetBackground()
 
 	s.Table.CellStyle = lipgloss.NewStyle().PaddingLeft(1).
 		PaddingRight(1).

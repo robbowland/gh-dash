@@ -100,9 +100,9 @@ func TestTabs(t *testing.T) {
 
 		tm := teatest.NewTestModel(t, m, teatest.WithInitialTermSize(80, 30))
 
-		testutils.WaitForText(t, tm, "1. Very long title   ⣻   |  2. Title   ⣻   |  3. Title   ⣻   | … →")
+		testutils.WaitForText(t, tm, "|  4. Ve… →")
 		tm.Send(dataFetchedMsg{})
-		testutils.WaitForText(t, tm, "1. Very long title (10)  |  2. Title (10)  |  3. Title (10)  | … →")
+		testutils.WaitForText(t, tm, "1. Very long title (10)  |  2. Title (10)  |  3. Title (10)  |  4. Ve… →")
 		for i := 0; i < len(m.ctx.Config.PRSections); i++ {
 			tm.Send(tea.KeyMsg{
 				Type:  tea.KeyRunes,

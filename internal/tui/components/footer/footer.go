@@ -43,11 +43,6 @@ func (m Model) View() string {
 	if m.ShowConfirmQuit {
 		footer = lipgloss.NewStyle().Render("Really quit? (Press y/enter to confirm, any other key to cancel)")
 	} else {
-		helpIndicator := lipgloss.NewStyle().
-			Background(m.ctx.Theme.FaintText).
-			Foreground(m.ctx.Theme.SelectedBackground).
-			Padding(0, 1).
-			Render("? help")
 		viewSwitcher := m.renderViewSwitcher(m.ctx)
 		leftSection := ""
 		if m.leftSection != nil {
@@ -56,6 +51,20 @@ func (m Model) View() string {
 		rightSection := ""
 		if m.rightSection != nil {
 			rightSection = *m.rightSection
+		}
+		repoInfo := m.renderRepoInfo(m.ctx)
+		rightContent := repoInfo
+		if rightSection != "" {
+			if repoInfo != "" {
+				rightContent = lipgloss.JoinHorizontal(
+					lipgloss.Top,
+					repoInfo,
+					lipgloss.NewStyle().Render(" "),
+					rightSection,
+				)
+			} else {
+				rightContent = rightSection
+			}
 		}
 		spacing := lipgloss.NewStyle().
 			Background(m.ctx.Styles.Common.FooterStyle.GetBackground()).
@@ -66,15 +75,12 @@ func (m Model) View() string {
 						m.ctx.ScreenWidth-lipgloss.Width(
 							viewSwitcher,
 						)-lipgloss.Width(leftSection)-
-							lipgloss.Width(rightSection)-
-							lipgloss.Width(
-								helpIndicator,
-							),
+							lipgloss.Width(rightContent),
 					)))
 
 		footer = m.ctx.Styles.Common.FooterStyle.
 			Render(lipgloss.JoinHorizontal(lipgloss.Top, viewSwitcher, leftSection, spacing,
-				rightSection, helpIndicator))
+				rightContent))
 	}
 
 	if m.ShowAll {
@@ -112,6 +118,19 @@ func (m *Model) renderViewButton(view config.ViewType) string {
 }
 
 func (m *Model) renderViewSwitcher(ctx *context.ProgramContext) string {
+	view := lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		lipgloss.NewStyle().PaddingLeft(1).Render(m.renderViewButton(config.PRsView)),
+		ctx.Styles.ViewSwitcher.ViewsSeparator.Render(" │ "),
+		m.renderViewButton(config.IssuesView),
+		lipgloss.NewStyle().Render(" "),
+		ctx.Styles.Common.FooterStyle.Foreground(m.ctx.Theme.FaintBorder).Render(" │"),
+	)
+
+	return ctx.Styles.ViewSwitcher.Root.Render(view)
+}
+
+func (m *Model) renderRepoInfo(ctx *context.ProgramContext) string {
 	var repo string
 	if m.ctx.RepoPath != "" {
 		name := path.Base(m.ctx.RepoPath)
@@ -126,19 +145,24 @@ func (m *Model) renderViewSwitcher(ctx *context.ProgramContext) string {
 		user = ctx.Styles.Common.FooterStyle.Render("@" + ctx.User)
 	}
 
-	view := lipgloss.JoinHorizontal(
-		lipgloss.Top,
-		lipgloss.NewStyle().PaddingLeft(1).Render(m.renderViewButton(config.PRsView)),
-		ctx.Styles.ViewSwitcher.ViewsSeparator.Render(" │ "),
-		m.renderViewButton(config.IssuesView),
-		lipgloss.NewStyle().Render(" "),
-		repo,
-		ctx.Styles.Common.FooterStyle.Foreground(m.ctx.Theme.FaintText).Render(" • "),
-		user,
-		ctx.Styles.Common.FooterStyle.Foreground(m.ctx.Theme.FaintBorder).Render(" │"),
-	)
+	if repo == "" && user == "" {
+		return ""
+	}
 
-	return ctx.Styles.ViewSwitcher.Root.Render(view)
+	leadingSpace := lipgloss.NewStyle().Render(" ")
+	if repo == "" {
+		return lipgloss.JoinHorizontal(lipgloss.Top, leadingSpace, user)
+	}
+
+	if user == "" {
+		return lipgloss.JoinHorizontal(lipgloss.Top, leadingSpace, repo)
+	}
+
+	separator := ctx.Styles.Common.FooterStyle.
+		Foreground(m.ctx.Theme.FaintText).
+		Render(" • ")
+
+	return lipgloss.JoinHorizontal(lipgloss.Top, leadingSpace, repo, separator, user)
 }
 
 func (m *Model) SetLeftSection(leftSection string) {
