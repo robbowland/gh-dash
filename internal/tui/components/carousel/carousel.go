@@ -24,6 +24,7 @@ type Model struct {
 	showSeparators         bool
 	separator              string
 	styles                 Styles
+	wrap                   bool
 
 	content string
 	start   int
@@ -165,6 +166,13 @@ func WithStyles(s Styles) Option {
 func WithKeyMap(km KeyMap) Option {
 	return func(m *Model) {
 		m.KeyMap = km
+	}
+}
+
+// WithWrap configures whether the carousel should wrap when moving past edges.
+func WithWrap(enabled bool) Option {
+	return func(m *Model) {
+		m.wrap = enabled
 	}
 }
 
@@ -347,14 +355,40 @@ func (m *Model) SetCursor(n int) {
 // MoveLeft moves the selection left by one item..
 // It can not go before the first item.
 func (m *Model) MoveLeft() {
-	m.cursor = clamp(m.cursor-1, 0, len(m.items)-1)
+	if len(m.items) == 0 {
+		return
+	}
+
+	if m.wrap {
+		if m.cursor <= 0 {
+			m.cursor = len(m.items) - 1
+		} else {
+			m.cursor--
+		}
+	} else {
+		m.cursor = clamp(m.cursor-1, 0, len(m.items)-1)
+	}
+
 	m.UpdateSize()
 }
 
 // MoveDown moves the selection right by one item.
 // It can not go after the last row.
 func (m *Model) MoveRight() {
-	m.cursor = clamp(m.cursor+1, 0, len(m.items)-1)
+	if len(m.items) == 0 {
+		return
+	}
+
+	if m.wrap {
+		if m.cursor >= len(m.items)-1 {
+			m.cursor = 0
+		} else {
+			m.cursor++
+		}
+	} else {
+		m.cursor = clamp(m.cursor+1, 0, len(m.items)-1)
+	}
+
 	m.UpdateSize()
 }
 

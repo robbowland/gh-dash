@@ -49,11 +49,29 @@ func (m *Model) getSectionAt(id int) section.Section {
 }
 
 func (m *Model) getPrevSectionId() int {
-	return max(0, (m.currSectionId - 1))
+	sections := m.getCurrentViewSections()
+	if len(sections) == 0 {
+		return 0
+	}
+
+	if m.currSectionId <= 0 {
+		return len(sections) - 1
+	}
+
+	return m.currSectionId - 1
 }
 
 func (m *Model) getNextSectionId() int {
-	return min((m.currSectionId + 1), len(m.ctx.GetViewSectionsConfig())-1)
+	sections := m.getCurrentViewSections()
+	if len(sections) == 0 {
+		return 0
+	}
+
+	if m.currSectionId >= len(sections)-1 {
+		return 0
+	}
+
+	return m.currSectionId + 1
 }
 
 type IssueCommandTemplateInput struct {

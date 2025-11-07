@@ -55,6 +55,7 @@ func NewModel(ctx *context.ProgramContext) Model {
 	c := carousel.New(
 		carousel.WithItems(tabs),
 		carousel.WithWidth(ctx.MainContentWidth),
+		carousel.WithWrap(true),
 	)
 
 	return Model{
