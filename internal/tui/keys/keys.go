@@ -30,6 +30,8 @@ type KeyMap struct {
 	CopyNumber    key.Binding
 	Help          key.Binding
 	Quit          key.Binding
+	PreviewLineDown key.Binding
+	PreviewLineUp   key.Binding
 }
 
 func CreateKeyMapForView(viewType config.ViewType) help.KeyMap {
@@ -98,6 +100,8 @@ func (k KeyMap) AppKeys() []key.Binding {
 		k.CopyNumber,
 		k.CopyUrl,
 		k.Search,
+		k.PreviewLineDown,
+		k.PreviewLineUp,
 	}
 }
 
@@ -173,6 +177,14 @@ var Keys = &KeyMap{
 	Quit: key.NewBinding(
 		key.WithKeys("q", "esc", "ctrl+c"),
 		key.WithHelp("q", "quit"),
+	),
+	PreviewLineDown: key.NewBinding(
+		key.WithKeys("ctrl+e"),
+		key.WithHelp("Ctrl+e", "preview line down"),
+	),
+	PreviewLineUp: key.NewBinding(
+		key.WithKeys("ctrl+y"),
+		key.WithHelp("Ctrl+y", "preview line up"),
 	),
 }
 
@@ -261,14 +273,18 @@ func rebindUniversal(universal []config.Keybinding) error {
 			key = &Keys.PrevSection
 		case "search":
 			key = &Keys.Search
-		case "copyurl":
-			key = &Keys.CopyUrl
-		case "copyNumber":
-			key = &Keys.CopyNumber
-		case "help":
-			key = &Keys.Help
-		case "quit":
-			key = &Keys.Quit
+	case "copyurl":
+		key = &Keys.CopyUrl
+	case "copyNumber":
+		key = &Keys.CopyNumber
+	case "previewLineDown":
+		key = &Keys.PreviewLineDown
+	case "previewLineUp":
+		key = &Keys.PreviewLineUp
+	case "help":
+		key = &Keys.Help
+	case "quit":
+		key = &Keys.Quit
 		default:
 			return fmt.Errorf("unknown built-in universal key: '%s'", kb.Builtin)
 		}

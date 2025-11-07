@@ -42,6 +42,12 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 		case key.Matches(msg, keys.Keys.PageUp):
 			m.viewport.HalfPageUp()
+
+		case key.Matches(msg, keys.Keys.PreviewLineDown):
+			m.viewport.ScrollDown(3)
+
+		case key.Matches(msg, keys.Keys.PreviewLineUp):
+			m.viewport.ScrollUp(3)
 		}
 	}
 
